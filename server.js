@@ -136,7 +136,16 @@ app.get('/quotebook/quote/:category', (req, res) => {
   if (!categories.includes(category)) {
       return res.status(404).json({ error: "Category not found" });
   }
-  const quoteArray = eval(category); 
+  let quoteArray;
+  if (category === "successQuotes") {
+    quoteArray = successQuotes;
+  } else if (category === "perseveranceQuotes") {
+    quoteArray = perseveranceQuotes;
+  } else if (category === "happinessQuotes") {
+    quoteArray = happinessQuotes;
+  } else {
+    return res.status(404).json({ error: "Category not found" });
+  }
   const randomIndex = Math.floor(Math.random() * quoteArray.length);
   const randomQuote = quoteArray[randomIndex];
   res.status(200).json(randomQuote);
@@ -144,7 +153,10 @@ app.get('/quotebook/quote/:category', (req, res) => {
 
 
 app.post('/quotebook/quote/new', (req, res) => {
-  const { category, quote, author } = req.body;
+  const body = req.body;
+  const category = body.category;
+  const quote = body.quote;
+  const author = body.author;
 
   if (!quote || !author) {
     return res.status(400).json({ error: "Quote and author are required" });
